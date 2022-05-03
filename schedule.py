@@ -12,5 +12,8 @@ class Schedule:
     def getPeriodList(self)->List[Period]:
         return self.periodList
 
+    def getWeekday(self):
+        return self.weekDay
+
     
 
