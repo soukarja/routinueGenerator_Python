@@ -49,3 +49,6 @@ class Subject:
         self.allotedTimes = {}
         for fac in self.getAllFaculty():
             self.allotedTimes[fac] = []
+
+    def clearAllotments(self):
+        self.currAllotments = 0

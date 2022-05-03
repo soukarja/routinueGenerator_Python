@@ -51,6 +51,8 @@ if __name__ == "__main__":
     sectionsList = []
     for sec in range(totalSections):
         weekSchedule = section(sec)
+        for s in subjects:
+            s.clearAllotments()
         for day in range(totalDays):
             sch = Schedule(day)
             starting_time = datetime.strptime("09:30", '%H:%M')
@@ -74,7 +76,7 @@ if __name__ == "__main__":
             # print(per.getSubject().getSubjectName(), per.getSubject().getFacultyName(), per.getSubject().getAllTimings())
 
     for x in sectionsList:
-        print("Section: ", x.getSectionNumber()+1)
+        print("Section: ", chr(x.getSectionNumber()+65))
         for s in x.getSchedule():
             print("Weekday: ", s.getWeekday()+1)
             for t in s.getPeriodList():

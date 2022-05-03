@@ -14,9 +14,8 @@ class Period:
         return self.facultyName
 
     def getStartingTime(self):
-        return self.startingTime
+        return str(self.startingTime.hour)+":"+str(self.startingTime.minute)
 
     def getEndingTime(self):
-        return self.endingTime
-
+        return str(self.endingTime.hour)+":"+str(self.endingTime.minute)
 
