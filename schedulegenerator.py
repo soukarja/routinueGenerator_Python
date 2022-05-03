@@ -1,12 +1,20 @@
 import json
 from datetime import datetime, timedelta
 import random
-from re import sub
+import calendar
 
 from subjects import Subject
 from schedule import Schedule
 from periods import Period
 from section import section
+
+
+def getStartingTime():
+    return datetime.strptime("09:30", '%H:%M')
+
+
+def getDayNameFromNumber(dayNumber):
+    return calendar.day_name[dayNumber]
 
 
 def getFreePeriod(subjectList, timing):
@@ -17,9 +25,6 @@ def getFreePeriod(subjectList, timing):
             return sub.getSubjectName(), facName
     
     return "empty", "empty"
-
-
-
 
 if __name__ == "__main__":
 
@@ -32,8 +37,7 @@ if __name__ == "__main__":
     totalSections = data['no_of_section']
     subjectsData = data['subjects']
 
-    starting_time = datetime.strptime("09:30", '%H:%M')
-    # dateTimeObj = datetime().now().time()
+    starting_time = getStartingTime()
     classInterval = timedelta(minutes=duration)
 
     avgClasses = totalClasses * totalDays / len(subjectsData)
@@ -53,9 +57,10 @@ if __name__ == "__main__":
         weekSchedule = section(sec)
         for s in subjects:
             s.clearAllotments()
+
         for day in range(totalDays):
             sch = Schedule(day)
-            starting_time = datetime.strptime("09:30", '%H:%M')
+            starting_time = getStartingTime()
 
             for s in subjects:
                 s.clearTimings()
@@ -70,19 +75,15 @@ if __name__ == "__main__":
 
                 sch.addPeriod(per)
                 starting_time = starting_time+classInterval
-            # weekSchedule.append(sch)
             weekSchedule.addSchedule(sch)
         sectionsList.append(weekSchedule)
-            # print(per.getSubject().getSubjectName(), per.getSubject().getFacultyName(), per.getSubject().getAllTimings())
 
     for x in sectionsList:
         print("Section: ", chr(x.getSectionNumber()+65))
         for s in x.getSchedule():
-            print("Weekday: ", s.getWeekday()+1)
-            for t in s.getPeriodList():
-                print(t.getSubject(), t.getFaculty(), t.getStartingTime())
+            print("Weekday: ", getDayNameFromNumber(s.getWeekday()))
+            for index,t in enumerate(s.getPeriodList()):
+                print(f"Period {index+1}) ",t.getSubject(), t.getFaculty(), t.getStartingTime())
             print("\n\n")
-
-    # for t in weekSchedule
 
     dataFile.close()

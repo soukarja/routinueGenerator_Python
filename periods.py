@@ -1,5 +1,3 @@
-from subjects import Subject
-
 class Period:
     def __init__(self, subjectName, facultyName, starting_time, ending_time):
         self.subjectName = subjectName
