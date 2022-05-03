@@ -28,8 +28,35 @@ def getFreePeriod(subjectList, timing):
     
     return "empty", "empty"
 
-if __name__ == "__main__":
 
+def displayData(sectionsList):
+    jsonData = {}
+    jsonData['schedule'] = []
+    for x in sectionsList:
+        print("Section: ", chr(x.getSectionNumber()+65))
+        temp = {}
+        temp['section_no'] = x.getSectionNumber()
+        temp['section_name'] =chr(x.getSectionNumber()+65)
+        temp['days'] = []
+        for s in x.getSchedule():
+            print("Weekday: ", getDayNameFromNumber(s.getWeekday()))
+            t2 = []
+            for index,t in enumerate(s.getPeriodList()):
+                t3 = {}
+                print(f"Period {index+1}) ",t.getSubject(), t.getFaculty(), t.getStartingTime())
+                t3['period_no'] = index
+                t3['subject_name'] = t.getSubject()
+                t3['faculty_name'] = t.getFaculty()
+                t3['starting_time'] = t.getStartingTime()
+                t3['ending_time'] = t.getEndingTime()
+                t2.append(t3)
+            temp['days'].append(t2)
+            print("\n\n")
+        jsonData['schedule'].append(temp)
+    print(json.dumps(jsonData))
+
+
+def loadDataFromJson():
     dataFile = open('data.json')
     data = json.load(dataFile)
 
@@ -38,6 +65,14 @@ if __name__ == "__main__":
     totalDays = data['no_of_days']
     totalSections = data['no_of_section']
     subjectsData = data['subjects']
+    dataFile.close()
+
+    return duration, totalClasses, totalDays, totalSections, subjectsData
+    
+
+if __name__ == "__main__":
+
+    duration, totalClasses, totalDays, totalSections, subjectsData = loadDataFromJson()
 
     starting_time = getStartingTime()
     classInterval = timedelta(minutes=duration)
@@ -80,12 +115,5 @@ if __name__ == "__main__":
             weekSchedule.addSchedule(sch)
         sectionsList.append(weekSchedule)
 
-    for x in sectionsList:
-        print("Section: ", chr(x.getSectionNumber()+65))
-        for s in x.getSchedule():
-            print("Weekday: ", getDayNameFromNumber(s.getWeekday()))
-            for index,t in enumerate(s.getPeriodList()):
-                print(f"Period {index+1}) ",t.getSubject(), t.getFaculty(), t.getStartingTime())
-            print("\n\n")
+    displayData(sectionsList)
 
-    dataFile.close()
