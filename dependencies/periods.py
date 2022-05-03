@@ -12,8 +12,15 @@ class Period:
         return self.facultyName
 
     def getStartingTime(self):
-        return str(self.startingTime.hour)+":"+str(self.startingTime.minute)
+        return self.formatTimeValue(self.startingTime.hour)+":"+self.formatTimeValue(self.startingTime.minute)
 
     def getEndingTime(self):
-        return str(self.endingTime.hour)+":"+str(self.endingTime.minute)
+        return self.formatTimeValue(self.endingTime.hour)+":"+self.formatTimeValue(self.endingTime.minute)
+
+    def formatTimeValue(self, timeValue):
+        if timeValue >= 10:
+            return str(timeValue)
+        
+        return "0"+str(timeValue)
+
 

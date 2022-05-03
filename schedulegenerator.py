@@ -10,7 +10,6 @@ from schedule import Schedule
 from periods import Period
 from section import section
 
-
 def getStartingTime():
     return datetime.strptime("09:30", '%H:%M')
 
@@ -25,7 +24,7 @@ def getFreePeriod(subjectList, timing):
         resp, facName = sub.addNewTimingAnyFaculty(timing)
         if resp:
             return sub.getSubjectName(), facName
-    
+
     return "empty", "empty"
 
 
@@ -36,14 +35,15 @@ def displayData(sectionsList):
         print("Section: ", chr(x.getSectionNumber()+65))
         temp = {}
         temp['section_no'] = x.getSectionNumber()
-        temp['section_name'] =chr(x.getSectionNumber()+65)
+        temp['section_name'] = chr(x.getSectionNumber()+65)
         temp['days'] = []
         for s in x.getSchedule():
             print("Weekday: ", getDayNameFromNumber(s.getWeekday()))
             t2 = []
-            for index,t in enumerate(s.getPeriodList()):
+            for index, t in enumerate(s.getPeriodList()):
                 t3 = {}
-                print(f"Period {index+1}) ",t.getSubject(), t.getFaculty(), t.getStartingTime())
+                print(f"Period {index+1}) ", t.getSubject(),
+                      t.getFaculty(), t.getStartingTime())
                 t3['period_no'] = index
                 t3['subject_name'] = t.getSubject()
                 t3['faculty_name'] = t.getFaculty()
@@ -68,7 +68,20 @@ def loadDataFromJson():
     dataFile.close()
 
     return duration, totalClasses, totalDays, totalSections, subjectsData
-    
+
+
+def addBreakTime(currentTime, normalPeriodDuration, noOfClasses, breakDuration=30):
+    startingTime = getStartingTime() + timedelta(minutes=noOfClasses *
+                                                 normalPeriodDuration//2)
+    if currentTime != startingTime:
+        return None
+    endTiming = startingTime + timedelta(minutes=breakDuration)
+    return Period(
+        subjectName="Break Time",
+        facultyName="",
+        starting_time=startingTime,
+        ending_time=endTiming)
+
 
 if __name__ == "__main__":
 
@@ -81,13 +94,11 @@ if __name__ == "__main__":
     print("avgClasses", avgClasses)
 
     subjects = []
-    for subj in subjectsData:    
+    for subj in subjectsData:
         temp = Subject(subj['subject_name'], avgClasses)
         for fac in subj['faculty_list']:
             temp.addFaculty(fac)
         subjects.append(temp)
-
-    
 
     sectionsList = []
     for sec in range(totalSections):
@@ -103,6 +114,15 @@ if __name__ == "__main__":
                 s.clearTimings()
 
             for classes in range(totalClasses):
+
+                breakTime = addBreakTime(
+                    currentTime=starting_time,
+                    normalPeriodDuration=duration,
+                    noOfClasses=totalClasses)
+                if breakTime != None:
+                    sch.addPeriod(breakTime)
+                    starting_time = breakTime.endingTime
+
                 subjN, facN = getFreePeriod(subjects, starting_time)
                 per = Period(
                     subjectName=subjN,
@@ -116,4 +136,3 @@ if __name__ == "__main__":
         sectionsList.append(weekSchedule)
 
     displayData(sectionsList)
-
