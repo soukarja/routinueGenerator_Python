@@ -2,7 +2,9 @@ import json
 from datetime import datetime, timedelta
 import random
 import calendar
+import sys
 
+sys.path.insert(0, './dependencies')
 from subjects import Subject
 from schedule import Schedule
 from periods import Period
