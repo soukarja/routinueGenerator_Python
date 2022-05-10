@@ -1,1 +1,1 @@
-web: gunicorn -w 4 "flaskr:main()"
+web: gunicorn wsgi:app
