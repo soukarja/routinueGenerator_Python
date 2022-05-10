@@ -28,7 +28,7 @@ class Subject:
         # self.allotedTimes[faculty_name].append(new_timing)
         self.addFacultyTiming(faculty_name, facList, new_timing)
 
-        self.currAllotments += 1
+        # self.currAllotments += 1
         return True
 
     def addNewTimingAnyFaculty(self, new_timing, facList):

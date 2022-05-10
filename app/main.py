@@ -6,7 +6,6 @@ import sys
 from flask import Flask, request
 from flask_cors import CORS
 
-# sys.path.insert(0, './dependencies')
 from subjects import Subject
 from schedule import Schedule
 from periods import Period
@@ -64,15 +63,12 @@ def displayData(sectionsList):
 
 
 def loadDataFromJson(data):
-    # dataFile = open('data.json')
-    # data = json.load(dataFile)
 
     duration = data['duration']
     totalClasses = data['no_of_classes']
     totalDays = data['no_of_days']
     totalSections = data['no_of_section']
     subjectsData = data['subjects']
-    # dataFile.close()
 
     return duration, totalClasses, totalDays, totalSections, subjectsData
 
@@ -108,7 +104,6 @@ def main():
     classInterval = timedelta(minutes=duration)
 
     avgClasses = totalClasses * totalDays / len(subjectsData)
-    # print("avgClasses", avgClasses)
 
     subjects = []
     facultyList = []
@@ -141,11 +136,6 @@ def main():
 
             if day>0:
                 subjects = subjects2[day-1]
-                # for s in subjects:
-                #     s.clearTimings()
-
-                # for fc in facList[day]:
-                #     fc.timimg = []
 
             for classes in range(totalClasses):
 
