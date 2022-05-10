@@ -1,1 +1,1 @@
-web: python schedulegenerator.py
+web: gunicorn schedulegenerator.py
