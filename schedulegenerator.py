@@ -3,12 +3,15 @@ from datetime import datetime, timedelta
 import random
 import calendar
 import sys
+from flask import Flask, request
 
 sys.path.insert(0, './dependencies')
 from subjects import Subject
 from schedule import Schedule
 from periods import Period
 from section import section
+
+app = Flask(__name__)
 
 def getStartingTime():
     return datetime.strptime("09:30", '%H:%M')
@@ -54,18 +57,19 @@ def displayData(sectionsList):
             print("\n\n")
         jsonData['schedule'].append(temp)
     print(json.dumps(jsonData))
+    return json.dumps(jsonData)
 
 
-def loadDataFromJson():
-    dataFile = open('data.json')
-    data = json.load(dataFile)
+def loadDataFromJson(data):
+    # dataFile = open('data.json')
+    # data = json.load(dataFile)
 
     duration = data['duration']
     totalClasses = data['no_of_classes']
     totalDays = data['no_of_days']
     totalSections = data['no_of_section']
     subjectsData = data['subjects']
-    dataFile.close()
+    # dataFile.close()
 
     return duration, totalClasses, totalDays, totalSections, subjectsData
 
@@ -82,10 +86,9 @@ def addBreakTime(currentTime, normalPeriodDuration, noOfClasses, breakDuration=3
         starting_time=startingTime,
         ending_time=endTiming)
 
-
-if __name__ == "__main__":
-
-    duration, totalClasses, totalDays, totalSections, subjectsData = loadDataFromJson()
+@app.route("/generate", methods=['POST'])
+def main():
+    duration, totalClasses, totalDays, totalSections, subjectsData = loadDataFromJson(request.get_json())
 
     starting_time = getStartingTime()
     classInterval = timedelta(minutes=duration)
@@ -142,4 +145,8 @@ if __name__ == "__main__":
         sectionsList.append(weekSchedule)
         subjects2[day] = subjects
 
-    displayData(sectionsList)
+    return displayData(sectionsList)
+
+
+if __name__ == "__main__":
+    app.run()
