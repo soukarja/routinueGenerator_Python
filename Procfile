@@ -1,1 +1,1 @@
-web: gunicorn schedulegenerator.py
+web: gunicorn -w 4 "flaskr:main()"
