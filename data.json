@@ -1,8 +1,8 @@
 {
   "duration": 60,
-  "no_of_classes": 8,
+  "no_of_classes": 2,
   "no_of_days": 5,
-  "no_of_section": 4,
+  "no_of_section": 2,
   "subjects": [
     {
       "subject_name": "ESP",

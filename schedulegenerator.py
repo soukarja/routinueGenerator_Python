@@ -91,7 +91,7 @@ if __name__ == "__main__":
     classInterval = timedelta(minutes=duration)
 
     avgClasses = totalClasses * totalDays / len(subjectsData)
-    print("avgClasses", avgClasses)
+    # print("avgClasses", avgClasses)
 
     subjects = []
     for subj in subjectsData:
@@ -100,16 +100,22 @@ if __name__ == "__main__":
             temp.addFaculty(fac)
         subjects.append(temp)
 
+    subjects2 = []
+    for _ in range(totalDays):
+        subjects2.append(subjects)
+        
+
     sectionsList = []
     for sec in range(totalSections):
         weekSchedule = section(sec)
+
         for s in subjects:
             s.clearAllotments()
 
         for day in range(totalDays):
             sch = Schedule(day)
             starting_time = getStartingTime()
-
+            subjects = subjects2[day]
             for s in subjects:
                 s.clearTimings()
 
@@ -134,5 +140,6 @@ if __name__ == "__main__":
                 starting_time = starting_time+classInterval
             weekSchedule.addSchedule(sch)
         sectionsList.append(weekSchedule)
+        subjects2[day] = subjects
 
     displayData(sectionsList)
