@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Flask = "==2.1.2"
+parsedatetime = "==2.6"
+aniso8601 = "==6.0.0"
+gunicorn = "*"
+Flask-Cors = "==3.0.7"
+Flask-RESTful = "==0.3.7"
+Flask-SQLAlchemy = "==2.4.0"
+flask = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
