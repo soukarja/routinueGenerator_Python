@@ -30,7 +30,7 @@ def getFreePeriod(subjectList, timing, facList):
         if resp:
             return sub.getSubjectName(), facName
 
-    return "empty", "empty"
+    return "N/A", "N/A"
 
 
 def displayData(sectionsList):
