@@ -4,14 +4,17 @@ import random
 import calendar
 import sys
 from flask import Flask, request
+from flask_cors import CORS
 
 sys.path.insert(0, './dependencies')
 from subjects import Subject
 from schedule import Schedule
 from periods import Period
 from section import section
+from faculty import Faculty
 
 app = Flask(__name__)
+CORS(app)
 
 def getStartingTime():
     return datetime.strptime("09:30", '%H:%M')
@@ -21,10 +24,10 @@ def getDayNameFromNumber(dayNumber):
     return calendar.day_name[dayNumber]
 
 
-def getFreePeriod(subjectList, timing):
+def getFreePeriod(subjectList, timing, facList):
     random.shuffle(subjectList)
     for sub in subjectList:
-        resp, facName = sub.addNewTimingAnyFaculty(timing)
+        resp, facName = sub.addNewTimingAnyFaculty(timing, facList)
         if resp:
             return sub.getSubjectName(), facName
 
@@ -74,9 +77,20 @@ def loadDataFromJson(data):
     return duration, totalClasses, totalDays, totalSections, subjectsData
 
 
+def copyFacultyList(facList):
+    newList = []
+    for fac in facList:
+        temp = Faculty(fac.getFacultyName())
+        newList.append(temp)
+    return newList
+
+
 def addBreakTime(currentTime, normalPeriodDuration, noOfClasses, breakDuration=30):
-    startingTime = getStartingTime() + timedelta(minutes=noOfClasses *
-                                                 normalPeriodDuration//2)
+    noc = noOfClasses
+    if noc%2!=0:
+        noc+=1
+    startingTime = getStartingTime() + timedelta(minutes=noc *
+                                                 normalPeriodDuration/2)
     if currentTime != startingTime:
         return None
     endTiming = startingTime + timedelta(minutes=breakDuration)
@@ -97,15 +111,20 @@ def main():
     # print("avgClasses", avgClasses)
 
     subjects = []
+    facultyList = []
+
     for subj in subjectsData:
         temp = Subject(subj['subject_name'], avgClasses)
         for fac in subj['faculty_list']:
             temp.addFaculty(fac)
+            facultyList.append(Faculty(fac))
         subjects.append(temp)
 
     subjects2 = []
+    facList = []
     for _ in range(totalDays):
         subjects2.append(subjects)
+        facList.append(copyFacultyList(facultyList))
         
 
     sectionsList = []
@@ -119,8 +138,14 @@ def main():
             sch = Schedule(day)
             starting_time = getStartingTime()
             subjects = subjects2[day]
-            for s in subjects:
-                s.clearTimings()
+
+            if day>0:
+                subjects = subjects2[day-1]
+                # for s in subjects:
+                #     s.clearTimings()
+
+                # for fc in facList[day]:
+                #     fc.timimg = []
 
             for classes in range(totalClasses):
 
@@ -132,7 +157,7 @@ def main():
                     sch.addPeriod(breakTime)
                     starting_time = breakTime.endingTime
 
-                subjN, facN = getFreePeriod(subjects, starting_time)
+                subjN, facN = getFreePeriod(subjects, starting_time, facList[day])
                 per = Period(
                     subjectName=subjN,
                     facultyName=facN,
@@ -145,7 +170,8 @@ def main():
         sectionsList.append(weekSchedule)
         subjects2[day] = subjects
 
-    return displayData(sectionsList)
+    rt = displayData(sectionsList)
+    return rt
 
 
 if __name__ == "__main__":
